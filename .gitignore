@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.pptx
+*.html
+.DS_Store
+.vscode/
+.idea/
+*.log
+.env
+.pnpm-store/
+.npmrc

@@ -1,0 +1,58 @@
+{
+  "name": "md2ppt",
+  "version": "0.2.2",
+  "description": "Convert Markdown to PowerPoint presentations using templates",
+  "type": "module",
+  "main": "dist/cli.js",
+  "bin": {
+    "md2ppt": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/cli.js",
+    "test": "node dist/cli.js convert examples/demo.md -o demo.pptx",
+    "lint": "eslint src --ext .ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "markdown",
+    "powerpoint",
+    "pptx",
+    "presentation",
+    "cli",
+    "templates"
+  ],
+  "author": "Vinci Rufus",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/areai51/md2ppt.git"
+  },
+  "dependencies": {
+    "chokidar": "^5.0.0",
+    "commander": "^12.1.0",
+    "express": "^5.2.1",
+    "front-matter": "^4.0.2",
+    "handlebars": "^4.7.8",
+    "marked": "^11.1.1",
+    "pptxgenjs": "^3.12.0",
+    "ws": "^8.19.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^20.11.0",
+    "@types/ws": "^8.18.1",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ]
+}
