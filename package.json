@@ -37,16 +37,17 @@
     "handlebars": "^4.7.8",
     "marked": "^11.1.1",
     "pptxgenjs": "^3.12.0",
+    "tsx": "^4.19.14",
     "ws": "^8.19.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
-    "@types/node": "^20.11.0",
+    "@types/node": "^20.19.33",
     "@types/ws": "^8.18.1",
-    "@typescript-eslint/eslint-plugin": "^6.19.0",
-    "@typescript-eslint/parser": "^6.19.0",
-    "eslint": "^8.56.0",
-    "typescript": "^5.3.3"
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.1",
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=18.0.0"

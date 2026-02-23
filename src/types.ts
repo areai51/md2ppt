@@ -3,31 +3,28 @@ export interface MD2PPTConfig {
   // Path to a configuration module (default: './md2ppt.config.js')
   config?: string;
 
-  // Presentation options (overrides from config file)
+  // Presentation options
   title?: string;
   author?: string;
   slideWidth?: number;   // in inches (default: 10)
   slideHeight?: number;  // in inches (default: 7.5)
-  slideLayout?: SlideLayoutOptions;
+  defaultLayout?: SlideLayout;
 
-  // Default text styles
+  // Text styles
   titleFont?: FontProps;
   bodyFont?: FontProps;
 
   // Background
   backgroundColor?: string;
-  backgroundImage?: string;
 
-  // Slide defaults
-  defaultLayout?: 'title' | 'content' | 'section' | 'blank';
+  // Advanced: pptxgenjs master slide configuration
+  master?: MasterConfig;
 }
 
-export interface SlideLayoutOptions {
-  titleSlide?: boolean;   // Use title slide layout for first slide?
-  titleAndContent?: boolean;
-  sectionHeader?: boolean;
-  twoColumn?: boolean;
-  // etc.
+export type SlideLayout = 'title' | 'content' | 'section' | 'blank' | 'twoColumn' | 'imageLeft' | 'imageRight';
+
+export interface MasterConfig {
+  // Future: define custom master slides based on theme
 }
 
 export interface FontProps {
@@ -42,10 +39,10 @@ export interface FontProps {
 export const DEFAULT_CONFIG: MD2PPTConfig = {
   slideWidth: 10,
   slideHeight: 7.5,
-  titleFont: { name: 'Arial', size: 32, bold: true, color: '333333' },
-  bodyFont: { name: 'Arial', size: 18, color: '444444' },
-  backgroundColor: 'FFFFFF',
-  defaultLayout: 'content'
+  defaultLayout: 'content',
+  titleFont: { name: 'Arial', size: 44, bold: true, color: '1E3A8A' },
+  bodyFont: { name: 'Arial', size: 24, color: '1F2937' },
+  backgroundColor: 'FFFFFF'
 };
 
 // Frontmatter interface
@@ -59,9 +56,17 @@ export interface FrontMatter {
 // Slide data structure
 export interface Slide {
   title?: string;
-  content: string; // HTML or plain text
-  layout?: 'title' | 'content' | 'section' | 'blank';
+  content: string; // HTML string
+  layout?: SlideLayout;
   notes?: string;
+  images?: SlideImage[]; // extracted images from markdown
+}
+
+export interface SlideImage {
+  src: string;
+  alt?: string;
+  width?: number; // inches
+  height?: number;
 }
 
 // Conversion result

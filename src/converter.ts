@@ -1,8 +1,11 @@
 import fm from 'front-matter';
 import { marked } from 'marked';
-import { FrontMatter, Slide } from './types.js';
+import { readFileAsync } from './utils.js';
+import { FrontMatter, Slide, SlideImage } from './types.js';
 
 export class Converter {
+  private imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+
   constructor() {
     marked.setOptions({
       gfm: true,
@@ -10,20 +13,13 @@ export class Converter {
     });
   }
 
-  /**
-   * Convert markdown to an array of slides.
-   * Slides are separated by '---' on a line by itself.
-   */
   convert(markdown: string): { slides: Slide[]; frontMatter: FrontMatter } {
     const { attributes, body } = fm(markdown);
-
-    // Split into slides by horizontal rule (---)
     const rawSlides = body.split(/^---$/m).filter(s => s.trim() !== '');
 
     const slides: Slide[] = rawSlides.map((slideMarkdown, index) => {
       const lines = slideMarkdown.trim().split('\n');
 
-      // If first line is a heading (# or ##), use it as title
       let title: string | undefined;
       let contentStart = 0;
 
@@ -39,20 +35,16 @@ export class Converter {
       }
 
       const contentLines = lines.slice(contentStart);
-      const content = marked(contentLines.join('\n'), { async: false }) as string;
+      const contentMarkdown = contentLines.join('\n');
 
-      // Determine layout based on presence of title and content
-      let layout: Slide['layout'] = 'content';
-      if (index === 0 && !title) {
-        layout = 'title'; // First slide without a heading becomes title slide
-      } else if (title && !content.trim()) {
-        layout = 'section';
-      }
+      const images = this.extractImages(contentMarkdown);
+      const content = marked.parse(contentMarkdown) as string;
 
-      return { title, content, layout };
+      const layout = this.detectLayout(title, contentMarkdown, index);
+
+      return { title, content, layout, images };
     });
 
-    // Ensure at least one slide
     if (slides.length === 0) {
       slides.push({ content: '', layout: 'title' });
     }
@@ -60,8 +52,28 @@ export class Converter {
     return { slides, frontMatter: attributes as FrontMatter };
   }
 
+  private extractImages(markdown: string): SlideImage[] {
+    const images: SlideImage[] = [];
+    let match;
+    while ((match = this.imageRegex.exec(markdown)) !== null) {
+      images.push({
+        src: match[2],
+        alt: match[1] || ''
+      });
+    }
+    return images;
+  }
+
+  private detectLayout(title: string | undefined, contentMarkdown: string, index: number): Slide['layout'] {
+    if (index === 0 && !title) return 'title';
+    const hasInternalRule = contentMarkdown.split('\n').some(line => line.trim() === '---');
+    if (hasInternalRule) return 'twoColumn';
+    const plainText = contentMarkdown.replace(/[#*`_\[\]]/g, '').trim();
+    if (title && plainText.length < 20) return 'section';
+    return 'content';
+  }
+
   async convertFile(filePath: string): Promise<{ slides: Slide[]; frontMatter: FrontMatter }> {
-    const { readFileAsync } = await import('./utils.js');
     const content = await readFileAsync(filePath);
     return this.convert(content);
   }

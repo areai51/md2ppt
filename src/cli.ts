@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { readFileAsync, writeFileAsync, fileExists, resolvePath, getFileName } from './utils.js';
+import path from 'path';
+import { readFileAsync, fileExists, resolvePath, getFileName } from './utils.js';
 import { Converter } from './converter.js';
 import { PPTGenerator } from './ppt-generator.js';
+import { startDevServer } from './dev-server.js';
 import { MD2PPTConfig, DEFAULT_CONFIG } from './types.js';
 
 const program = new Command();
@@ -21,31 +23,48 @@ program
   .option('-c, --config <file>', 'Configuration file (md2ppt.config.js)')
   .action(async (input, options) => {
     try {
-      // Load configuration
       const config = await loadConfig(options);
 
-      // Validate input file
       if (!(await fileExists(input))) {
         console.error(`Error: Input file not found: ${input}`);
         process.exit(1);
       }
 
-      // Read and convert markdown to slides
       const converter = new Converter();
       const { slides, frontMatter } = await converter.convertFile(input);
 
-      // Apply frontmatter defaults to config
       if (frontMatter.title && !config.title) config.title = frontMatter.title;
       if (frontMatter.author && !config.author) config.author = frontMatter.author;
 
-      // Determine output path
       const outputPath = options.output || (await getOutputPath(input));
 
-      // Generate PowerPoint
       const generator = new PPTGenerator(config);
       await generator.generate(slides, outputPath);
       console.log(`✓ PowerPoint generated: ${outputPath}`);
 
+    } catch (error) {
+      console.error('Error:', error instanceof Error ? error.message : error);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('dev')
+  .description('Start dev server with live HTML preview')
+  .argument('<input>', 'Input Markdown file')
+  .option('-p, --port <port>', 'Dev server port', '3456')
+  .option('-c, --config <file>', 'Configuration file')
+  .action(async (input, options) => {
+    try {
+      if (!(await fileExists(input))) {
+        console.error(`Error: Input file not found: ${input}`);
+        process.exit(1);
+      }
+      await startDevServer({
+        input,
+        port: parseInt(options.port, 10),
+        config: options.config
+      });
     } catch (error) {
       console.error('Error:', error instanceof Error ? error.message : error);
       process.exit(1);
@@ -68,8 +87,5 @@ function getOutputPath(inputPath: string): string {
   const baseName = getFileName(inputPath);
   return `${baseName}.pptx`;
 }
-
-// Dev server could be added later if needed
-// For now, only convert command
 
 program.parse();
