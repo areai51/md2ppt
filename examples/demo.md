@@ -1,43 +1,50 @@
 ---
-title: MD2PPT Demo
-author: Author Name
-date: 2024-01-01
+title: "Introduction to md2ppt"
+author: "Vinci Rufus"
+date: "2026-02-23"
 ---
-# MD2PPT Demo
 
-This is a **demo** of the `md2ppt` CLI tool.
+# Welcome to md2ppt
+
+A CLI tool that converts Markdown to PowerPoint presentations using templates.
 
 ## Features
 
-- Convert Markdown to PDF
-- Customizable templates
-- Handles GFM (GitHub Flavored Markdown)
-- Supports frontmatter
+- Simple slide syntax using `---` separators
+- Customizable layout per slide
+- Frontmatter support for metadata
+- Configurable text styles, colors, and slide dimensions
+- Easy to use CLI
 
-### Code Example
+## How to Use
 
-```javascript
-console.log('Hello, world!');
+```bash
+# Install dependencies
+npm install
+
+# Build
+npm run build
+
+# Convert a markdown file
+npm start convert examples/demo.md -o output.pptx
 ```
 
-### Lists
+## Slide Layouts
 
-1. First item
-2. Second item
-3. Third item
+### Title Slide
 
-### Blockquote
+First slide automatically becomes title slide if it has no heading.
 
-> "The best way to predict the future is to invent it." — Alan Kay
+### Content Slides
 
-### Table
+Use headings for slide titles.
 
-| Feature | Status |
-|---------|--------|
-| Markdown | ✅ |
-| PDF | ✅ |
-| Templates | ✅ |
+### Section Headers
+
+Slides with title but no content become section headers.
 
 ---
 
-*End of demo*
+# Thank You!
+
+Questions?

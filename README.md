@@ -1,133 +1,153 @@
-# MD2PPT
+# md2ppt
 
-A CLI tool that converts Markdown to PDF using customizable templates — think Astro, but for PDFs.
+A CLI tool that converts Markdown to PowerPoint presentations — fast, template-driven, and easy to use.
 
 ## Features
 
-- Convert Markdown to PDF with a single command
-- Customizable templates with layout, styling, and components
-- Supports multiple output formats (letter, a4, etc.)
-- Template inheritance and partials
-- Frontmatter support for metadata
-- Built-in template engine (Handlebars-like syntax)
-- CLI flags for quick customization
-- Watch mode for development
+- Convert Markdown to PPTX with a single command
+- Slide separation using `---` delimiters
+- Automatic title/content detection from headings
+- Frontmatter support for presentation metadata
+- Customizable configuration (slide size, fonts, colors, layouts)
+- Simple CLI, no GUI required
+- Built on pptxgenjs for reliable PowerPoint generation
 
 ## Quick Start
 
 ```bash
-# Install globally (once published)
-npm install -g md2ppt
+# Install dependencies
+npm install
 
-# Or use npx
-npx md2ppt convert input.md -o output.pptx
+# Build TypeScript
+npm run build
 
-# With a custom template
-md2ppt convert input.md --template my-template.hbs -o output.pptx
+# Convert a markdown file
+npm start convert examples/demo.md -o slides.pptx
 
-# Dev mode with live preview
-md2ppt dev input.md
+# Or use npx directly
+npx md2ppt convert examples/demo.md -o slides.pptx
 ```
 
-## Agent Skill
+## How It Works
 
-Install the md2ppt skill for Claude Code, Amp, OpenCode etc:
+Write your presentation in Markdown:
+
+```markdown
+---
+title: "My Presentation"
+author: "Jane Doe"
+---
+
+# Introduction
+
+This is the title slide. Frontmatter title is used if present.
+
+---
+
+# First Content Slide
+
+- Bullet point 1
+- Bullet point 2
+
+---
+
+# Section Header
+
+A slide with only a title (section header).
+
+---
+
+# Another Slide
+
+More content here.
+
+## Sub-point
+
+- Nested bullet
+```
+
+Slides are separated by `---` on a line by itself.
+
+- A heading (`#`, `##`, `###`) becomes the slide title.
+- Remaining text (including other headings) becomes the slide body.
+
+## Configuration
+
+Create an `md2ppt.config.js` in your project to customize the output:
+
+```js
+export default {
+  title: 'Presentation Title',
+  author: 'Your Name',
+  slideWidth: 10,      // inches
+  slideHeight: 7.5,    // inches
+  defaultLayout: 'content', // 'title' | 'content' | 'section' | 'blank'
+  titleFont: {
+    name: 'Arial',
+    size: 44,
+    bold: true,
+    color: '1E3A8A'
+  },
+  bodyFont: {
+    name: 'Arial',
+    size: 24,
+    color: '1F2937'
+  },
+  backgroundColor: 'FFFFFF'
+};
+```
+
+Use it with the CLI:
 
 ```bash
-npx skills add areai51/md2ppt
+md2ppt convert talk.md -o talk.pptx -c md2ppt.config.js
 ```
 
-This adds the skill to your Claude Code environment, enabling intelligent PDF generation with automatic template selection and markdown formatting.
+## CLI Options
 
-## Dev Mode
-
-Start a live preview server to see your markdown rendered in different templates:
-
-```bash
-md2ppt dev input.md --port 3456
 ```
+md2ppt convert <input> [options]
 
-Opens a browser with:
-- **Left pane**: Template selector (switch between templates)
-- **Right pane**: Live preview of your markdown
-
-Changes to your `.md` file or templates auto-reload the preview.
-
-### Built-in Templates
-
-- `default` - Clean, professional look
-- `modern` - Bold colors, Inter-style typography
-- `minimal` - Simple, classic serif
-- `newsletter` - Email newsletter style
-- `resume` - CV/resume formatting
+Options:
+  -o, --output <file>     Output PPTX file path
+  -c, --config <file>     Path to configuration module (JS)
+```
 
 ## Project Structure
 
 ```
-my-doc/
-├── content/
-│   └── my-doc.md
-├── templates/
-│   ├── default.hbs
-│   ├── parts/
-│   │   └── header.hbs
-│   └── styles.css
+my-presentation/
+├── slides.md
 ├── md2ppt.config.js
-└── package.json
-```
-
-## Templates
-
-Templates use handlebars-like syntax for placeholders and partials:
-
-```handlebars
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <style>{{{styles}}}</style>
-</head>
-<body>
-  {{> header}}
-  <main>
-    {{{content}}}
-  </main>
-</body>
-</html>
-```
-
-## Configuration
-
-`md2ppt.config.js`:
-
-```js
-export default {
-  template: './templates/default.hbs',
-  style: './templates/styles.css',
-  pdfOptions: {
-    format: 'A4',
-    margin: { top: '1cm', right: '1cm', bottom: '1cm', left: '1cm' }
-  }
-}
+├── node_modules/
+└── templates/ (future)
 ```
 
 ## Development
 
 ```bash
-# Clone and setup
-git clone https://github.com/areai51/md2pdf.git
-cd md2pdf
+# Clone the repository
+git clone https://github.com/areai51/md2ppt.git
+cd md2ppt
+
+# Install dependencies
 npm install
 
 # Build
 npm run build
 
-# Test
+# Test with the demo
 npm test
-
-# Link for global use
-npm link
 ```
+
+## Roadmap
+
+- [ ] Dev server with live preview (HTML slide deck)
+- [ ] More slide layouts (two column, comparison, image+text)
+- [ ] Template system (DSL for slide masters)
+- [ ] Image embedding from markdown
+- [ ] Export to PDF via HTML conversion
+- [ ] Theme presets
 
 ## License
 
